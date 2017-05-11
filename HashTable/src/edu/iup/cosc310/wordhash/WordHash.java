@@ -20,11 +20,8 @@ public class WordHash {
 		Scanner in = new Scanner(new File(args[0]));
 		in.useDelimiter("\\W");
 
-		
-		
-
 		while (in.hasNext()) {
-			
+			//account for pages of length 40
 			while (in.hasNext() && lineNo < 40) {
 			
 			String word = in.next();
@@ -34,9 +31,7 @@ public class WordHash {
 			} else {
 				table.put(word, count + 1);
 			}
-			
-		}
-
+			} //end of inner while
 		}
 
 		ItemIterator<String> iter = table.keys();
