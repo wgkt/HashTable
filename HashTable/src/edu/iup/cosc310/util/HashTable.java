@@ -3,7 +3,14 @@ package edu.iup.cosc310.util;
 import java.util.NoSuchElementException;
 
 public class HashTable<K, V> implements DictionaryI {
-
+/**
+ * Implementation of a hash table
+ * @author Meghan Cowan
+ *
+ * @param <K>
+ * @param <V>
+ */
+//Create entry object, containing a key and a value
 	public class HashEntry<K, V> {
 
 		private Object key;
@@ -23,21 +30,32 @@ public class HashTable<K, V> implements DictionaryI {
 		}
 
 	}
-
+//Use array of entries to create a table
 	private int noKeys = 0;
-	private static final int TABLE_SIZE = 51;
+	private static final int TABLE_SIZE = 151;
 	private HashEntry<K, V>[] table;
-	private HashEntry<K, V> deleted;
-
+	
+//Use null entry in deleted cases
+	private final HashEntry<K, V> deleted = new HashEntry<K, V>(null, null);
+/**
+ * Construct a HashTable
+ */
 	public HashTable() {
 		table = new HashEntry[TABLE_SIZE];
-
 	}
-
+/**
+ * Perform hashing function to determine location in table
+ * @param key
+ * @return
+ */
 	public int hash(Object key) {
-		return key.hashCode();
+		return key.hashCode() % table.length;
 	}
-
+/**
+ * Find the position of a key
+ * @param key
+ * @return index
+ */
 	private int find(Object key) {
 		int index = hash(key);
 
@@ -56,7 +74,9 @@ public class HashTable<K, V> implements DictionaryI {
 		}
 		return index;
 	}
-
+/**
+ * Put an object in the table or update the value of an existing object
+ */
 	public Object put(Object key, Object value) {
 		int index = find(key);
 
@@ -73,7 +93,9 @@ public class HashTable<K, V> implements DictionaryI {
 		table[index].value = value;
 		return oldVal;
 	}
-
+/**
+ * Get the value of a key
+ */
 	public Object get(Object key) {
 		int index = find(key);
 		if (table[index] != null) {
@@ -82,33 +104,45 @@ public class HashTable<K, V> implements DictionaryI {
 			return null;
 		}
 	}
-
+/**
+ * Remove entry by key
+ */
 	public Object remove(Object key) {
 		int index = find(key);
-		
-			if (table[index].key.equals(key)) {
-				Object temp = table[index].value;
-				table[index].key = deleted;
-				noKeys--;
-				return temp;
-			} else {
-				return null;
-			}
+		if (table[index].key.equals(key)) {
+			Object oldVal = table[index].value;
+			table[index] = deleted;
+			noKeys--;
+			return oldVal;
+		} 
+		return null;
 
 	}
-
-	public ItemIterator<K> keys() {
+/**
+ * ItermIterator 
+ */
+	public ItemIterator keys() {
+		// TODO Auto-generated method stub
 		return new HashIterator<K>();
 	}
-
+/**
+ * Test if empty
+ */
 	public boolean isEmpty() {
 		return noKeys == 0;
 	}
-
+/**
+ * Find number of keys
+ */
 	public int noKeys() {
 		return noKeys;
 	}
-
+/**
+ * HashTable iterator
+ * @author Meghan
+ *
+ * @param <E>
+ */
 	private class HashIterator<E> implements ItemIterator<E> {
 
 		int index;
@@ -119,20 +153,20 @@ public class HashTable<K, V> implements DictionaryI {
 		}
 
 		public boolean hasMoreItems() {
-			while (index < table.length
-					&& (table[index] == null || table[index] == deleted)) {
+			while (index < table.length && (table[index] == null || table[index] == deleted)) {
 				index++;
 			}
-
-			return index < table.length;
+			
+			return index < table.length ;
 		}
 
 		public E nextItem() {
 			if (hasMoreItems() == false) {
 				throw new NoSuchElementException();
 			}
-			return (E) table[index++].getKey();
-		}
+				return (E) table[index++].getKey();
+		   }
+
 
 	}
 
